@@ -14,15 +14,15 @@ class WeatherService {
         $this->baseUrl = 'https://api.openweathermap.org/data/2.5/';
     }
 
-    public function getCurrentWeather(string $city) : array|null
+    public function getCurrentWeather(string $city, string $units) : array|null
     {
-        $cacheKey = "weather:current:" . strtolower($city);
+        $cacheKey = "weather:current:" . strtolower($city) . "$units";
 
-        return Cache::remember($cacheKey, now()->addMinutes(10), function() use($city){
+        return Cache::remember($cacheKey, now()->addMinutes(10), function() use($city, $units){
             $response = Http::get($this->baseUrl . 'weather', [
                 'q' => $city,
                 'appId' => $this->apiKey,
-                'units' => 'metric'
+                'units' => $units
             ]);
 
             if($response->successful()){
@@ -33,15 +33,15 @@ class WeatherService {
         });
     }
 
-    public function getForecastWeather(string $city) : array|null
+    public function getForecastWeather(string $city, string $units) : array|null
     {
-        $cacheKey = 'weather:forecast:' . strtolower($city);
+        $cacheKey = 'weather:forecast:' . strtolower($city) . "$units";
 
-        return Cache::remember($cacheKey, now()->addHour(), function() use($city){
+        return Cache::remember($cacheKey, now()->addHour(), function() use($city, $units){
             $response = Http::get($this->baseUrl . 'forecast', [
                 'q' => $city,
                 'appId' => $this->apiKey,
-                'units' => 'metric'
+                'units' => $units
             ]);
 
             if($response->successful()){
