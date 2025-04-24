@@ -16,7 +16,7 @@ class WeatherService {
 
     public function getCurrentWeather(string $city, string $units) : array|null
     {
-        $cacheKey = "weather:current:" . strtolower($city) . "$units";
+        $cacheKey = "weather:current:" . strtolower($city) . ":$units";
 
         return Cache::remember($cacheKey, now()->addMinutes(10), function() use($city, $units){
             $response = Http::get($this->baseUrl . 'weather', [
@@ -35,7 +35,7 @@ class WeatherService {
 
     public function getForecastWeather(string $city, string $units) : array|null
     {
-        $cacheKey = 'weather:forecast:' . strtolower($city) . "$units";
+        $cacheKey = 'weather:forecast:' . strtolower($city) . ":$units";
 
         return Cache::remember($cacheKey, now()->addHour(), function() use($city, $units){
             $response = Http::get($this->baseUrl . 'forecast', [
