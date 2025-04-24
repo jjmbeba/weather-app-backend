@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Services\WeatherService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class WeatherController extends Controller
 {
@@ -21,14 +20,16 @@ class WeatherController extends Controller
         ], 404);
     }
 
-    public function forecast(Request $request)
+    public function forecast(Request $request, WeatherService $weather)
     {
         $validated = $request->validate([
             'city' => 'required|string'
         ]);
 
-        // $data = $weather
+        $data = $weather->getForecastWeather($validated['city']);
 
-        return "This returns the forecast";
+        return $data ? response()->json($data) : response()->json([
+            'error' => 'City not found'
+        ], 404);
     }
 }

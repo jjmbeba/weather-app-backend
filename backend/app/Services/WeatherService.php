@@ -32,4 +32,23 @@ class WeatherService {
             return null;
         });
     }
+
+    public function getForecastWeather(string $city) : array|null
+    {
+        $cacheKey = 'weather:forecast:' . strtolower($city);
+
+        return Cache::remember($cacheKey, now()->addHour(), function() use($city){
+            $response = Http::get($this->baseUrl . 'forecast', [
+                'q' => $city,
+                'appId' => $this->apiKey,
+                'units' => 'metric'
+            ]);
+
+            if($response->successful()){
+                return $response->json();
+            }
+
+            return null;
+        });
+    }
 }
